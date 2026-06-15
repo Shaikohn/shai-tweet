@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import * as repo from './auth.repository.js';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,4 +80,50 @@ export async function registerUser(payload) {
   };
 
   return user;
+}
+
+export async function loginUser(payload) {
+  let { email, password } = payload || {};
+
+  if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
+    const err = new Error('Invalid credentials');
+    err.status = 401;
+    throw err;
+  }
+
+  email = String(email).trim().toLowerCase();
+
+  const userRow = await repo.findByEmail(email);
+  if (!userRow) {
+    const err = new Error('Invalid credentials');
+    err.status = 401;
+    throw err;
+  }
+
+  const match = await bcrypt.compare(password, userRow.password_hash);
+  if (!match) {
+    const err = new Error('Invalid credentials');
+    err.status = 401;
+    throw err;
+  }
+
+  const user = {
+    id: userRow.id,
+    email: userRow.email,
+    username: userRow.username,
+    displayName: userRow.display_name,
+    bio: userRow.bio ?? null,
+    avatarUrl: userRow.avatar_url ?? null,
+  };
+
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    const err = new Error('JWT secret not configured');
+    err.status = 500;
+    throw err;
+  }
+
+  const token = jwt.sign({ sub: user.id, username: user.username }, secret, { expiresIn: "7d" });
+
+  return { token, user };
 }
