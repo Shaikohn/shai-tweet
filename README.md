@@ -1,0 +1,100 @@
+# ShaiTweet
+
+ShaiTweet is a Twitter/X-inspired social platform built as part of an AI-assisted software engineering challenge.
+
+## About
+
+This project recreates the core Twitter/X experience, including authentication, timelines, social interactions, user profiles, image uploads, and reply threads.
+
+The goal is not only to deliver a functional application, but also to demonstrate software architecture decisions, testing practices, development workflow, and effective use of AI-assisted development tools.
+
+## Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* Tailwind CSS
+* Redux Toolkit
+* RTK Query
+
+### Backend
+
+* Node.js
+* Express
+* PostgreSQL
+* JWT Authentication
+* bcrypt
+
+### Testing
+
+* Vitest
+* Supertest
+* React Testing Library
+* Playwright
+
+## Environment Variables
+
+### Backend
+
+Create a `.env` file inside `/backend` using the provided `.env.example` template.
+
+| Variable          | Description                    |
+| ----------------- | ------------------------------ |
+| PORT              | Backend server port            |
+| DATABASE_HOST     | PostgreSQL host                |
+| DATABASE_PORT     | PostgreSQL port                |
+| DATABASE_NAME     | Database name                  |
+| DATABASE_USER     | Database user                  |
+| DATABASE_PASSWORD | Database password              |
+| JWT_SECRET        | Secret used to sign JWT tokens |
+| CLIENT_URL        | Frontend URL for CORS          |
+
+### Frontend
+
+Create a `.env` file inside `/frontend` using the provided `.env.example` template.
+
+| Variable     | Description          |
+| ------------ | -------------------- |
+| VITE_API_URL | Backend API base URL |
+
+## Project Status
+
+### Core Features
+
+* [ ] User Registration
+* [ ] Login / Logout
+* [ ] Protected Routes
+* [ ] User Profile
+* [ ] Create Tweet
+* [ ] Delete Tweet
+* [ ] Timeline Feed
+* [ ] Infinite Scroll / Pagination
+* [ ] Follow / Unfollow
+* [ ] Like / Unlike
+* [ ] Followers & Following Lists
+* [ ] User Search
+
+### Bonus Features
+
+* [ ] Image Uploads
+* [ ] Reply Threads
+
+### Quality & Delivery
+
+* [ ] Backend Test Coverage > 80%
+* [ ] Frontend Integration Tests
+* [ ] End-to-End Authentication Test
+* [ ] Seed Data
+* [ ] Complete Runbook
+* [ ] Technical Documentation
+* [ ] Responsive Design
+
+
+## Author
+
+**Shai Kohn**
+
+React Native & Full-Stack Developer
+
+Portfolio: https://shaidev.vercel.app/
