@@ -38,3 +38,12 @@ export async function login(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+export async function me(req, res) {
+  return res.status(200).json({
+    user: {
+      id: req.user.id,
+      username: req.user.username,
+    },
+  });
+}
