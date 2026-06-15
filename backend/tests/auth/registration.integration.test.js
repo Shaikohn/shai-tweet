@@ -1,16 +1,11 @@
-import { describe, it, beforeEach, afterAll, expect } from 'vitest';
+import { describe, it, beforeEach, expect } from 'vitest';
 import request from 'supertest';
 import app from '../../src/app.js';
 import pool from '../../src/config/database.js';
 
 describe('POST /api/auth/register - integration', () => {
   beforeEach(async () => {
-    // clean users table to keep tests isolated
     await pool.query('DELETE FROM users');
-  });
-
-  afterAll(async () => {
-    await pool.end();
   });
 
   it('successfully registers a user', async () => {
