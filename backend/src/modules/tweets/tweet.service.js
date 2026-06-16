@@ -39,3 +39,27 @@ export async function createTweet(payload, user) {
 
   return tweet;
 }
+
+export async function deleteTweet(tweetId, user) {
+  if (!tweetId) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const tweet = await repo.findTweetById(tweetId);
+  if (!tweet || tweet.deleted_at) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  if (String(tweet.user_id) !== String(user.id)) {
+    const err = new Error('Forbidden');
+    err.status = 403;
+    throw err;
+  }
+
+  await repo.softDeleteTweet(tweetId);
+  return;
+}

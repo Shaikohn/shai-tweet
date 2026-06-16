@@ -15,3 +15,18 @@ export async function create(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+export async function remove(req, res) {
+  try {
+    const tweetId = req.params.id;
+    await service.deleteTweet(tweetId, req.user);
+    return res.status(200).json({ message: 'Tweet deleted successfully' });
+  } catch (err) {
+    if (err && err.status) {
+      return res.status(err.status).json({ message: err.message });
+    }
+
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
