@@ -2,6 +2,7 @@ import express from "express";
 import pool from "./config/database.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import tweetRoutes from "./modules/tweets/tweet.routes.js";
+import userRoutes from "./modules/users/user.routes.js";
 
 const app = express();
 
@@ -9,6 +10,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tweets', tweetRoutes);
+app.use('/api/users', userRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
