@@ -60,20 +60,34 @@ Create a `.env` file inside `/frontend` using the provided `.env.example` templa
 
 ## Project Status
 
+> Progress reflects backend implementation and test coverage. Frontend integration will be tracked separately.
+
 ### Core Features
 
-* [ ] User Registration
-* [ ] Login / Logout
-* [ ] Protected Routes
+* [x] User Registration
+* [x] Login / Logout
+* [x] Protected Routes
 * [ ] User Profile
-* [ ] Create Tweet
-* [ ] Delete Tweet
+* [x] Create Tweet
+* [x] Delete Tweet
 * [ ] Timeline Feed
 * [ ] Infinite Scroll / Pagination
-* [ ] Follow / Unfollow
+* [x] Follow / Unfollow
 * [ ] Like / Unlike
 * [ ] Followers & Following Lists
 * [ ] User Search
+
+### Backend API Progress
+
+* [x] User Registration
+* [x] Login
+* [x] JWT Authentication
+* [x] User Timeline
+* [x] Create Tweet
+* [x] Delete Tweet
+* [x] Follow User
+* [x] Unfollow User
+* [x] Integration Tests for all implemented endpoints
 
 ### Bonus Features
 
