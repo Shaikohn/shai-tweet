@@ -48,3 +48,18 @@ export async function findFollowingByUserId(userId) {
 
   return result.rows;
 }
+
+export async function findUsersByQuery(query) {
+  const q = (query || '').trim().toLowerCase();
+  const pattern = `%${q}%`;
+  const result = await pool.query(
+    `SELECT id, username, display_name, bio, avatar_url
+     FROM users
+     WHERE LOWER(username) LIKE $1 OR LOWER(display_name) LIKE $1
+     ORDER BY username ASC
+     LIMIT 10`,
+    [pattern]
+  );
+
+  return result.rows;
+}

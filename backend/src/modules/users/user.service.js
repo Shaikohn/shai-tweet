@@ -62,3 +62,24 @@ export async function getFollowing(username) {
 
   return following;
 }
+
+export async function searchUsers(q) {
+  if (typeof q !== 'string' || q.trim().length === 0) {
+    const err = new Error('Search query is required');
+    err.status = 400;
+    throw err;
+  }
+
+  const normalized = q.trim().toLowerCase();
+  const rows = await repo.findUsersByQuery(normalized);
+
+  const users = rows.map((row) => ({
+    id: row.id,
+    username: row.username,
+    displayName: row.display_name,
+    bio: row.bio ?? null,
+    avatarUrl: row.avatar_url ?? null,
+  }));
+
+  return users;
+}
