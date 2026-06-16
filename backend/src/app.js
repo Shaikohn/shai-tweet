@@ -5,6 +5,7 @@ import tweetRoutes from "./modules/tweets/tweet.routes.js";
 import userRoutes from "./modules/users/user.routes.js";
 import followRoutes from "./modules/follows/follow.routes.js";
 import feedRoutes from "./modules/feed/feed.routes.js";
+import likeRoutes from "./modules/likes/like.routes.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/api/tweets', tweetRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/users', followRoutes);
 app.use('/api/feed', feedRoutes);
+app.use('/api/tweets', likeRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
