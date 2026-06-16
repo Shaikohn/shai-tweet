@@ -102,6 +102,35 @@ export async function createReply(payload, user, parentTweetId) {
   return tweet;
 }
 
+export async function getReplies(parentTweetId) {
+  if (!isValidUuid(parentTweetId)) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const parent = await repo.findTweetById(parentTweetId);
+  if (!parent || parent.deleted_at) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const rows = await repo.findRepliesByParentId(parentTweetId);
+
+  const tweets = rows.map((row) => ({
+    id: row.id,
+    content: row.content,
+    imageUrl: row.image_url ?? null,
+    parentTweetId: row.parent_tweet_id ?? null,
+    createdAt: row.created_at ? (row.created_at instanceof Date ? row.created_at.toISOString() : new Date(row.created_at).toISOString()) : null,
+    likesCount: Number(row.likes_count ?? 0),
+    author: { id: row.user_id, username: row.username },
+  }));
+
+  return tweets;
+}
+
 export async function deleteTweet(tweetId, user) {
   if (!tweetId) {
     const err = new Error('Tweet not found');
