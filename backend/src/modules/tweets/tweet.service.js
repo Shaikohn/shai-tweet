@@ -1,5 +1,12 @@
 import * as repo from './tweet.repository.js';
 
+const uuidRegex =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+function isValidUuid(value) {
+  return typeof value === 'string' && uuidRegex.test(value);
+}
+
 export async function createTweet(payload, user) {
   let { content } = payload || {};
 
@@ -25,6 +32,60 @@ export async function createTweet(payload, user) {
   }
 
   const created = await repo.createTweet({ userId: user.id, content });
+
+  const author = await repo.findUserById(user.id);
+
+  const tweet = {
+    id: created.id,
+    content: created.content,
+    imageUrl: created.image_url ?? null,
+    parentTweetId: created.parent_tweet_id ?? null,
+    createdAt: created.created_at ? (created.created_at instanceof Date ? created.created_at.toISOString() : new Date(created.created_at).toISOString()) : null,
+    likesCount: Number(created.likes_count ?? 0),
+    author: author ? { id: author.id, username: author.username } : { id: user.id, username: user.username },
+  };
+
+  return tweet;
+}
+
+export async function createReply(payload, user, parentTweetId) {
+  if (!isValidUuid(parentTweetId)) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const parent = await repo.findTweetById(parentTweetId);
+  if (!parent || parent.deleted_at) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  let { content } = payload || {};
+
+  const errors = [];
+
+  if (typeof content !== 'string') {
+    errors.push({ field: 'content', message: 'Content is required' });
+  } else {
+    content = content.trim();
+    if (content.length === 0) {
+      errors.push({ field: 'content', message: 'Content cannot be empty' });
+    }
+    if (content.length > 280) {
+      errors.push({ field: 'content', message: 'Content must be at most 280 characters' });
+    }
+  }
+
+  if (errors.length > 0) {
+    const err = new Error('Validation failed');
+    err.status = 400;
+    err.details = errors;
+    throw err;
+  }
+
+  const created = await repo.createReply({ userId: user.id, content, parentTweetId });
 
   const author = await repo.findUserById(user.id);
 

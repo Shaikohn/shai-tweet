@@ -30,3 +30,20 @@ export async function remove(req, res) {
     return res.status(500).json({ message: 'Internal server error' });
   }
 }
+
+export async function createReply(req, res) {
+  try {
+    const parentId = req.params.id;
+    const tweet = await service.createReply(req.body, req.user, parentId);
+    return res.status(201).json({ tweet });
+  } catch (err) {
+    if (err && err.status) {
+      const payload = { message: err.message };
+      if (err.details) payload.details = err.details;
+      return res.status(err.status).json(payload);
+    }
+
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
