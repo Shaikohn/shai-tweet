@@ -22,3 +22,29 @@ export async function findTweetsByUserId(userId) {
 
   return result.rows;
 }
+
+export async function findFollowersByUserId(userId) {
+  const result = await pool.query(
+    `SELECT u.id, u.username, u.display_name, u.bio, u.avatar_url
+     FROM follows f
+     JOIN users u ON u.id = f.follower_id
+     WHERE f.following_id = $1
+     ORDER BY u.username ASC`,
+    [userId]
+  );
+
+  return result.rows;
+}
+
+export async function findFollowingByUserId(userId) {
+  const result = await pool.query(
+    `SELECT u.id, u.username, u.display_name, u.bio, u.avatar_url
+     FROM follows f
+     JOIN users u ON u.id = f.following_id
+     WHERE f.follower_id = $1
+     ORDER BY u.username ASC`,
+    [userId]
+  );
+
+  return result.rows;
+}

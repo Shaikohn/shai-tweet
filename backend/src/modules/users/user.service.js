@@ -22,3 +22,43 @@ export async function getUserTweets(username) {
 
   return tweets;
 }
+
+export async function getFollowers(username) {
+  const user = await repo.findByUsernameLower(username);
+  if (!user) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const rows = await repo.findFollowersByUserId(user.id);
+  const followers = rows.map((row) => ({
+    id: row.id,
+    username: row.username,
+    displayName: row.display_name,
+    bio: row.bio ?? null,
+    avatarUrl: row.avatar_url ?? null,
+  }));
+
+  return followers;
+}
+
+export async function getFollowing(username) {
+  const user = await repo.findByUsernameLower(username);
+  if (!user) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const rows = await repo.findFollowingByUserId(user.id);
+  const following = rows.map((row) => ({
+    id: row.id,
+    username: row.username,
+    displayName: row.display_name,
+    bio: row.bio ?? null,
+    avatarUrl: row.avatar_url ?? null,
+  }));
+
+  return following;
+}
