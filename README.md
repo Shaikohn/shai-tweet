@@ -4,7 +4,7 @@ ShaiTweet is a Twitter/X-inspired social platform built as part of an AI-assiste
 
 ## About
 
-This project recreates the core Twitter/X experience, including authentication, timelines, social interactions, user profiles, image uploads, and reply threads.
+This project recreates the core Twitter/X experience, including authentication, timelines, social interactions, user profiles, personalized feeds, likes, follows, and reply threads.
 
 The goal is not only to deliver a functional application, but also to demonstrate software architecture decisions, testing practices, development workflow, and effective use of AI-assisted development tools.
 
@@ -67,11 +67,11 @@ Create a `.env` file inside `/frontend` using the provided `.env.example` templa
 * [x] User Registration
 * [x] Login / Logout
 * [x] Protected Routes
-* [ ] User Profile
+* [x] User Profile
 * [x] Create Tweet
 * [x] Delete Tweet
 * [x] Timeline Feed
-* [ ] Infinite Scroll / Pagination
+* [x] Infinite Scroll / Pagination
 * [x] Follow / Unfollow
 * [x] Like / Unlike
 * [x] Followers & Following Lists
@@ -83,10 +83,13 @@ Create a `.env` file inside `/frontend` using the provided `.env.example` templa
 * [x] Login
 * [x] JWT Authentication
 * [x] Current User (/me)
+* [x] User Profile
 * [x] User Timeline
 * [x] Personalized Feed
 * [x] Create Tweet
 * [x] Delete Tweet
+* [x] Create Reply
+* [x] Get Tweet Replies
 * [x] Like Tweet
 * [x] Unlike Tweet
 * [x] Follow User
@@ -94,19 +97,23 @@ Create a `.env` file inside `/frontend` using the provided `.env.example` templa
 * [x] Followers List
 * [x] Following List
 * [x] User Search
+* [x] Pagination
+* [x] Seed Data
 * [x] Integration Tests for all implemented endpoints
 
 ### Bonus Features
 
 * [ ] Image Uploads
-* [ ] Reply Threads
+* [x] Reply Threads
+
+> The data model already includes an `image_url` field for future image support, but upload handling is intentionally out of scope for the current MVP.
 
 ### Quality & Delivery
 
-* [ ] Backend Test Coverage > 80%
+* [x] Backend Test Coverage > 80%
 * [ ] Frontend Integration Tests
 * [ ] End-to-End Authentication Test
-* [ ] Seed Data
+* [x] Seed Data
 * [ ] Complete Runbook
 * [ ] Technical Documentation
 * [ ] Responsive Design
