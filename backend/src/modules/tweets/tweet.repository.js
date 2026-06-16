@@ -1,11 +1,23 @@
 import pool from '../../config/database.js';
 
 export async function createTweet({ userId, content }) {
-  const result = await pool.query(
+  const insert = await pool.query(
     `INSERT INTO tweets (user_id, content, image_url, parent_tweet_id)
      VALUES ($1, $2, NULL, NULL)
-     RETURNING id, content, image_url, parent_tweet_id, created_at, user_id`,
+     RETURNING id`,
     [userId, content]
+  );
+
+  const id = insert.rows[0].id;
+
+  const result = await pool.query(
+    `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id,
+            COUNT(l.user_id) AS likes_count
+     FROM tweets t
+     LEFT JOIN likes l ON l.tweet_id = t.id
+     WHERE t.id = $1
+     GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id`,
+    [id]
   );
 
   return result.rows[0];

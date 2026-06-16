@@ -34,6 +34,7 @@ export async function createTweet(payload, user) {
     imageUrl: created.image_url ?? null,
     parentTweetId: created.parent_tweet_id ?? null,
     createdAt: created.created_at ? (created.created_at instanceof Date ? created.created_at.toISOString() : new Date(created.created_at).toISOString()) : null,
+    likesCount: Number(created.likes_count ?? 0),
     author: author ? { id: author.id, username: author.username } : { id: user.id, username: user.username },
   };
 

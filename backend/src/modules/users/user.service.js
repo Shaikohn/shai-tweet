@@ -16,6 +16,7 @@ export async function getUserTweets(username) {
     imageUrl: row.image_url ?? null,
     parentTweetId: row.parent_tweet_id ?? null,
     createdAt: row.created_at ? (row.created_at instanceof Date ? row.created_at.toISOString() : new Date(row.created_at).toISOString()) : null,
+    likesCount: Number(row.likes_count ?? 0),
     author: { id: user.id, username: user.username },
   }));
 

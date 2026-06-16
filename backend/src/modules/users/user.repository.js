@@ -11,10 +11,12 @@ export async function findByUsernameLower(username) {
 
 export async function findTweetsByUserId(userId) {
   const result = await pool.query(
-    `SELECT id, content, image_url, parent_tweet_id, created_at
-     FROM tweets
-     WHERE user_id = $1 AND deleted_at IS NULL
-     ORDER BY created_at DESC`,
+    `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, COUNT(l.user_id) AS likes_count
+     FROM tweets t
+     LEFT JOIN likes l ON l.tweet_id = t.id
+     WHERE t.user_id = $1 AND t.deleted_at IS NULL
+     GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at
+     ORDER BY t.created_at DESC, t.id DESC`,
     [userId]
   );
 
