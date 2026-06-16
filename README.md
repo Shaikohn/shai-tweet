@@ -70,23 +70,30 @@ Create a `.env` file inside `/frontend` using the provided `.env.example` templa
 * [ ] User Profile
 * [x] Create Tweet
 * [x] Delete Tweet
-* [ ] Timeline Feed
+* [x] Timeline Feed
 * [ ] Infinite Scroll / Pagination
 * [x] Follow / Unfollow
-* [ ] Like / Unlike
-* [ ] Followers & Following Lists
-* [ ] User Search
+* [x] Like / Unlike
+* [x] Followers & Following Lists
+* [x] User Search
 
 ### Backend API Progress
 
 * [x] User Registration
 * [x] Login
 * [x] JWT Authentication
+* [x] Current User (/me)
 * [x] User Timeline
+* [x] Personalized Feed
 * [x] Create Tweet
 * [x] Delete Tweet
+* [x] Like Tweet
+* [x] Unlike Tweet
 * [x] Follow User
 * [x] Unfollow User
+* [x] Followers List
+* [x] Following List
+* [x] User Search
 * [x] Integration Tests for all implemented endpoints
 
 ### Bonus Features

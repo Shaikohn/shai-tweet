@@ -7,5 +7,6 @@ router.get('/search', controller.searchUsers);
 router.get('/:username/tweets', controller.getTweets);
 router.get('/:username/followers', controller.getFollowers);
 router.get('/:username/following', controller.getFollowing);
+router.get('/:username', controller.getProfile);
 
 export default router;

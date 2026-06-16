@@ -30,6 +30,21 @@ export async function searchUsers(req, res) {
   }
 }
 
+export async function getProfile(req, res) {
+  try {
+    const username = req.params.username;
+    const user = await service.getUserProfile(username);
+    return res.status(200).json({ user });
+  } catch (err) {
+    if (err && err.status) {
+      return res.status(err.status).json({ message: err.message });
+    }
+
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
 export async function getFollowers(req, res) {
   try {
     const username = req.params.username;

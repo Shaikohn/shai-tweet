@@ -9,6 +9,21 @@ export async function findByUsernameLower(username) {
   return result.rows[0];
 }
 
+export async function findUserProfileByUsername(username) {
+  if (!username) return null;
+  const result = await pool.query(
+    `SELECT u.id, u.username, u.display_name, u.bio, u.avatar_url,
+            (SELECT COUNT(*) FROM follows f WHERE f.following_id = u.id) AS followers_count,
+            (SELECT COUNT(*) FROM follows f2 WHERE f2.follower_id = u.id) AS following_count,
+            (SELECT COUNT(*) FROM tweets t WHERE t.user_id = u.id AND t.deleted_at IS NULL) AS tweets_count
+     FROM users u
+     WHERE LOWER(u.username) = $1`,
+    [username.trim().toLowerCase()]
+  );
+
+  return result.rows[0];
+}
+
 export async function findTweetsByUserId(userId) {
   const result = await pool.query(
     `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, COUNT(l.user_id) AS likes_count
