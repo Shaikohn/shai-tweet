@@ -1,9 +1,15 @@
 import * as repo from './feed.repository.js';
 
-export async function getFeedForUser(userId) {
-  const rows = await repo.findFeedTweetsByUserId(userId);
+export async function getFeedForUser(userId, page = 1, limit = 20) {
+  const offset = (Math.max(Number(page) || 1, 1) - 1) * (Number(limit) || 20);
+  const fetchLimit = Number(limit) + 1;
 
-  const tweets = rows.map((row) => ({
+  const rows = await repo.findFeedTweetsByUserId(userId, fetchLimit, offset);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+
+  const tweets = sliced.map((row) => ({
     id: row.id,
     content: row.content,
     imageUrl: row.image_url ?? null,
@@ -13,5 +19,12 @@ export async function getFeedForUser(userId) {
     author: { id: row.user_id, username: row.username },
   }));
 
-  return tweets;
+  return {
+    tweets,
+    pagination: {
+      page: Number(page) || 1,
+      limit: Number(limit) || 20,
+      hasMore: Boolean(hasMore),
+    },
+  };
 }

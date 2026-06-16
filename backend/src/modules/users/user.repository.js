@@ -24,15 +24,16 @@ export async function findUserProfileByUsername(username) {
   return result.rows[0];
 }
 
-export async function findTweetsByUserId(userId) {
+export async function findTweetsByUserId(userId, limit, offset) {
   const result = await pool.query(
     `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, COUNT(l.user_id) AS likes_count
      FROM tweets t
      LEFT JOIN likes l ON l.tweet_id = t.id
      WHERE t.user_id = $1 AND t.deleted_at IS NULL
      GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at
-     ORDER BY t.created_at DESC, t.id DESC`,
-    [userId]
+     ORDER BY t.created_at DESC, t.id DESC
+     LIMIT $2 OFFSET $3`,
+    [userId, limit, offset]
   );
 
   return result.rows;

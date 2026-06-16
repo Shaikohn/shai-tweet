@@ -1,6 +1,6 @@
 import * as repo from './user.repository.js';
 
-export async function getUserTweets(username) {
+export async function getUserTweets(username, page = 1, limit = 20) {
   const user = await repo.findByUsernameLower(username);
   if (!user) {
     const err = new Error('User not found');
@@ -8,9 +8,15 @@ export async function getUserTweets(username) {
     throw err;
   }
 
-  const rows = await repo.findTweetsByUserId(user.id);
+  const offset = (Math.max(Number(page) || 1, 1) - 1) * (Number(limit) || 20);
+  const fetchLimit = Number(limit) + 1;
 
-  const tweets = rows.map((row) => ({
+  const rows = await repo.findTweetsByUserId(user.id, fetchLimit, offset);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+
+  const tweets = sliced.map((row) => ({
     id: row.id,
     content: row.content,
     imageUrl: row.image_url ?? null,
@@ -20,7 +26,14 @@ export async function getUserTweets(username) {
     author: { id: user.id, username: user.username },
   }));
 
-  return tweets;
+  return {
+    tweets,
+    pagination: {
+      page: Number(page) || 1,
+      limit: Number(limit) || 20,
+      hasMore: Boolean(hasMore),
+    },
+  };
 }
 
 export async function getFollowers(username) {

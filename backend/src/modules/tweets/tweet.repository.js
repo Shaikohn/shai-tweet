@@ -46,7 +46,7 @@ export async function createReply({ userId, content, parentTweetId }) {
   return result.rows[0];
 }
 
-export async function findRepliesByParentId(parentTweetId) {
+export async function findRepliesByParentId(parentTweetId, limit, offset) {
   const result = await pool.query(
     `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id, u.username,
             COUNT(l.user_id) AS likes_count
@@ -55,8 +55,9 @@ export async function findRepliesByParentId(parentTweetId) {
      JOIN users u ON u.id = t.user_id
      WHERE t.parent_tweet_id = $1 AND t.deleted_at IS NULL
      GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id, u.username
-     ORDER BY t.created_at ASC, t.id ASC`,
-    [parentTweetId]
+     ORDER BY t.created_at ASC, t.id ASC
+     LIMIT $2 OFFSET $3`,
+    [parentTweetId, limit, offset]
   );
 
   return result.rows;

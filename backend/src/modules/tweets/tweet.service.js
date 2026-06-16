@@ -102,7 +102,7 @@ export async function createReply(payload, user, parentTweetId) {
   return tweet;
 }
 
-export async function getReplies(parentTweetId) {
+export async function getReplies(parentTweetId, page = 1, limit = 20) {
   if (!isValidUuid(parentTweetId)) {
     const err = new Error('Tweet not found');
     err.status = 404;
@@ -116,9 +116,15 @@ export async function getReplies(parentTweetId) {
     throw err;
   }
 
-  const rows = await repo.findRepliesByParentId(parentTweetId);
+  const offset = (Math.max(Number(page) || 1, 1) - 1) * (Number(limit) || 20);
+  const fetchLimit = Number(limit) + 1;
 
-  const tweets = rows.map((row) => ({
+  const rows = await repo.findRepliesByParentId(parentTweetId, fetchLimit, offset);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+
+  const tweets = sliced.map((row) => ({
     id: row.id,
     content: row.content,
     imageUrl: row.image_url ?? null,
@@ -128,7 +134,14 @@ export async function getReplies(parentTweetId) {
     author: { id: row.user_id, username: row.username },
   }));
 
-  return tweets;
+  return {
+    tweets,
+    pagination: {
+      page: Number(page) || 1,
+      limit: Number(limit) || 20,
+      hasMore: Boolean(hasMore),
+    },
+  };
 }
 
 export async function deleteTweet(tweetId, user) {
