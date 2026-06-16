@@ -50,7 +50,6 @@ export async function registerUser(payload) {
     throw err;
   }
 
-  // Check for existing email and username
   const existingByEmail = await repo.findByEmail(email);
   if (existingByEmail) {
     const err = new Error('Email already in use');
