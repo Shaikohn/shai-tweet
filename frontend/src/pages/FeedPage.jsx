@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import TweetCard from '../components/TweetCard'
+import TweetComposer from '../components/TweetComposer'
 import { useGetFeedQuery } from '../services/api'
 
 const getErrorMessage = (err) => {
@@ -24,7 +25,7 @@ export default function FeedPage() {
   const [page, setPage] = useState(1)
   const [tweets, setTweets] = useState([])
 
-  const { data, isLoading, isFetching, isError, error } = useGetFeedQuery({ page, limit: LIMIT })
+  const { data, isLoading, isFetching, isError, error, refetch } = useGetFeedQuery({ page, limit: LIMIT })
 
   useEffect(() => {
     if (!data) return
@@ -39,9 +40,19 @@ export default function FeedPage() {
 
   const handleLoadMore = () => setPage((p) => p + 1)
 
+  const handleCreated = () => {
+    if (page === 1) {
+      refetch()
+    } else {
+      setPage(1)
+    }
+  }
+
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Feed</h1>
+
+      <TweetComposer onCreated={handleCreated} />
 
       {isLoading && page === 1 && <div>Loading feed...</div>}
 

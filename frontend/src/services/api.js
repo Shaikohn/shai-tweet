@@ -44,8 +44,15 @@ export const api = createApi({
 				method: 'GET',
 			}),
 		}),
+		createTweet: builder.mutation({
+			query: ({ content }) => ({
+				url: `${apiPrefix}/tweets`,
+				method: 'POST',
+				body: { content },
+			}),
+		}),
 	}),
 })
 
-export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery } = api
+export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery, useCreateTweetMutation } = api
 
