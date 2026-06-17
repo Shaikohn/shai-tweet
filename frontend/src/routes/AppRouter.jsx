@@ -6,6 +6,7 @@ import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import ProfilePage from '../pages/ProfilePage'
 import SearchPage from '../pages/SearchPage'
+import ThreadPage from '../pages/ThreadPage'
 import ProtectedRoute from './ProtectedRoute'
 
 export default function AppRouter() {
@@ -24,6 +25,7 @@ export default function AppRouter() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/profile/:username" element={<ProfilePage />} />
+                    <Route path="/tweets/:id" element={<ThreadPage />} />
                     <Route path="/search" element={<SearchPage />} />
                 </Routes>
             </Layout>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useLikeTweetMutation, useUnlikeTweetMutation } from '../services/api'
 
 export default function TweetCard({ tweet }) {
@@ -61,7 +62,8 @@ export default function TweetCard({ tweet }) {
       )}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600">Likes: {localLikes}</div>
-        <div>
+        <div className="flex items-center space-x-2">
+          <Link to={`/tweets/${id}`} className="text-sm text-blue-600 hover:underline">Reply</Link>
           {localLiked ? (
             <button onClick={handleUnlike} disabled={loading} className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50">
               {unliking ? '...' : 'Unlike'}

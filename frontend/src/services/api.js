@@ -57,6 +57,12 @@ export const api = createApi({
 				method: 'GET',
 			}),
 		}),
+		getTweetReplies: builder.query({
+			query: ({ id, page = 1, limit = 20 } = {}) => ({
+				url: `${apiPrefix}/tweets/${id}/replies?page=${page}&limit=${limit}`,
+				method: 'GET',
+			}),
+		}),
 		getUserTweets: builder.query({
 			query: ({ username, page = 1, limit = 20 } = {}) => ({
 				url: `${apiPrefix}/users/${username}/tweets?page=${page}&limit=${limit}`,
@@ -79,6 +85,13 @@ export const api = createApi({
 			query: (username) => ({
 				url: `${apiPrefix}/users/${username}/follow`,
 				method: 'DELETE',
+			}),
+		}),
+		createReply: builder.mutation({
+			query: ({ id, content }) => ({
+				url: `${apiPrefix}/tweets/${id}/replies`,
+				method: 'POST',
+				body: { content },
 			}),
 		}),
 		likeTweet: builder.mutation({
@@ -106,8 +119,10 @@ export const {
 	useUnlikeTweetMutation,
 	useGetUserProfileQuery,
 	useGetUserTweetsQuery,
+	useGetTweetRepliesQuery,
 	useSearchUsersQuery,
 	useFollowUserMutation,
 	useUnfollowUserMutation,
+    useCreateReplyMutation,
 } = api
 
