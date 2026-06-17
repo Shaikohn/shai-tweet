@@ -10,7 +10,7 @@ export default function Layout({ children }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
-  const { data: meData } = useGetMeQuery(undefined, { skip: !token })
+  const { data: meData, error: meError, isError: meIsError } = useGetMeQuery(undefined, { skip: !token })
 
   useEffect(() => {
     if (meData) {
@@ -18,6 +18,17 @@ export default function Layout({ children }) {
       dispatch(setUser(u))
     }
   }, [meData, dispatch])
+
+  useEffect(() => {
+    if (!token) return
+    if (!meIsError) return
+    const status = meError?.status ?? meError?.originalStatus
+    if (status === 401) {
+      dispatch(logout())
+      dispatch(api.util.resetApiState())
+      navigate('/login')
+    }
+  }, [meIsError, meError, token, dispatch, navigate])
 
   const handleLogout = () => {
     dispatch(logout());

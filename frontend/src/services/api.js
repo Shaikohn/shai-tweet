@@ -16,8 +16,9 @@ const baseQuery = fetchBaseQuery({
 
 export const api = createApi({
 	reducerPath: 'api',
-	baseQuery,
-	endpoints: (builder) => ({
+ 	baseQuery,
+ 	tagTypes: ['Feed', 'Profile'],
+ 	endpoints: (builder) => ({
 		login: builder.mutation({
 			query: (credentials) => ({
 				url: `${apiPrefix}/auth/login`,
@@ -43,6 +44,7 @@ export const api = createApi({
 				url: `${apiPrefix}/feed?page=${page}&limit=${limit}`,
 				method: 'GET',
 			}),
+			providesTags: (result) => [{ type: 'Feed' }],
 		}),
 		createTweet: builder.mutation({
 			query: ({ content }) => ({
@@ -56,6 +58,7 @@ export const api = createApi({
 				url: `${apiPrefix}/users/${username}`,
 				method: 'GET',
 			}),
+			providesTags: (result, error, username) => [{ type: 'Profile', id: username }],
 		}),
 		getTweetReplies: builder.query({
 			query: ({ id, page = 1, limit = 20 } = {}) => ({
@@ -80,12 +83,14 @@ export const api = createApi({
 				url: `${apiPrefix}/users/${username}/follow`,
 				method: 'POST',
 			}),
+			invalidatesTags: (result, error, username) => [{ type: 'Feed' }, { type: 'Profile', id: username }],
 		}),
 		unfollowUser: builder.mutation({
 			query: (username) => ({
 				url: `${apiPrefix}/users/${username}/follow`,
 				method: 'DELETE',
 			}),
+			invalidatesTags: (result, error, username) => [{ type: 'Feed' }, { type: 'Profile', id: username }],
 		}),
 		createReply: builder.mutation({
 			query: ({ id, content }) => ({

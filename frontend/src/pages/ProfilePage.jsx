@@ -28,7 +28,13 @@ export default function ProfilePage() {
   const [followUser, { isLoading: followingLoading }] = useFollowUserMutation()
   const [unfollowUser, { isLoading: unfollowLoading }] = useUnfollowUserMutation()
 
-  const { data: profileData, isLoading: loadingProfile, isError: profileError, error: profileErr } = useGetUserProfileQuery(username)
+  const currentUserId = useSelector((s) => s.auth.user?.id)
+  const { data: profileData, isLoading: loadingProfile, isError: profileError, error: profileErr, refetch: refetchProfile } = useGetUserProfileQuery(username, { refetchOnMountOrArgChange: true })
+
+  useEffect(() => {
+    // refetch profile when authenticated user changes to ensure followedByCurrentUser is correct
+    if (typeof refetchProfile === 'function') refetchProfile()
+  }, [currentUserId, refetchProfile])
   const { data, isLoading, isFetching, isError, error, refetch } = useGetUserTweetsQuery({ username, page, limit: LIMIT })
 
   useEffect(() => {
