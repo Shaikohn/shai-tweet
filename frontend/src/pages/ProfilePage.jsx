@@ -4,38 +4,23 @@ import { useGetUserProfileQuery, useGetUserTweetsQuery, useFollowUserMutation, u
 import { useSelector } from 'react-redux'
 import TweetCard from '../components/TweetCard'
 
-const getErrorMessage = (err) => {
-  if (!err) return null
-  const data = err.data
-  if (data) {
-    if (typeof data === 'string') return data
-    if (data.message) return data.message
-    return JSON.stringify(data)
-  }
-  return err?.error || JSON.stringify(err)
-}
-
 export default function ProfilePage() {
   const { username } = useParams()
-  const LIMIT = 20
+  const currentUser = useSelector((s) => s.auth.user)
+  const currentUsername = currentUser?.username
+
+  const { data: profileData, isLoading: loadingProfile, error: profileError } = useGetUserProfileQuery(username)
+
   const [page, setPage] = useState(1)
   const [tweets, setTweets] = useState([])
-  const currentUsername = useSelector((s) => s.auth.user?.username)
+  const { data: tweetsData, isLoading: loadingTweets, isFetching, error: tweetsError } = useGetUserTweetsQuery({ username, page }, { skip: !username })
+
+  const [followUser, { isLoading: followLoading }] = useFollowUserMutation()
+  const [unfollowUser, { isLoading: unfollowLoading }] = useUnfollowUserMutation()
+
   const [isFollowing, setIsFollowing] = useState(false)
   const [localFollowersCount, setLocalFollowersCount] = useState(0)
   const [followError, setFollowError] = useState(null)
-
-  const [followUser, { isLoading: followingLoading }] = useFollowUserMutation()
-  const [unfollowUser, { isLoading: unfollowLoading }] = useUnfollowUserMutation()
-
-  const currentUserId = useSelector((s) => s.auth.user?.id)
-  const { data: profileData, isLoading: loadingProfile, isError: profileError, error: profileErr, refetch: refetchProfile } = useGetUserProfileQuery(username, { refetchOnMountOrArgChange: true })
-
-  useEffect(() => {
-    // refetch profile when authenticated user changes to ensure followedByCurrentUser is correct
-    if (typeof refetchProfile === 'function') refetchProfile()
-  }, [currentUserId, refetchProfile])
-  const { data, isLoading, isFetching, isError, error, refetch } = useGetUserTweetsQuery({ username, page, limit: LIMIT })
 
   useEffect(() => {
     setTweets([])
@@ -44,15 +29,15 @@ export default function ProfilePage() {
   }, [username])
 
   useEffect(() => {
-    if (!data) return
-    const newTweets = data.tweets || []
+    if (!tweetsData) return
+    const newTweets = tweetsData.tweets || []
     setTweets((prev) => {
       if (page === 1) return newTweets
       const existing = new Set(prev.map((t) => t.id))
       const additions = newTweets.filter((t) => !existing.has(t.id))
       return [...prev, ...additions]
     })
-  }, [data, page])
+  }, [tweetsData, page])
 
   useEffect(() => {
     setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
@@ -61,51 +46,75 @@ export default function ProfilePage() {
 
   const handleLoadMore = () => setPage((p) => p + 1)
 
+  const handleFollowToggle = async () => {
+    setFollowError(null)
+    try {
+      if (isFollowing) {
+        setIsFollowing(false)
+        setLocalFollowersCount((n) => Math.max(0, n - 1))
+        await unfollowUser(username).unwrap()
+      } else {
+        setIsFollowing(true)
+        setLocalFollowersCount((n) => n + 1)
+        await followUser(username).unwrap()
+      }
+    } catch (err) {
+      setFollowError(err?.data?.message || 'Follow action failed')
+      // revert optimistic
+      setIsFollowing((v) => !v)
+      setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
+    }
+  }
+
   if (loadingProfile) return <div className="p-4">Loading profile...</div>
   if (profileError) {
-    if (profileErr?.status === 404) return <div className="p-4">User not found</div>
-    return <div className="p-4 text-red-600">{getErrorMessage(profileErr) || 'Failed to load profile'}</div>
+    if (profileError?.status === 404) return <div className="p-4">User not found</div>
+    return <div className="p-4 text-red-600">{profileError?.data?.message || 'Failed to load profile'}</div>
   }
 
   const user = profileData?.user
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <div className="bg-white border rounded p-4 mb-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">{user?.avatarUrl ? <img src={user.avatarUrl} alt="avatar" className="w-full h-full rounded-full" /> : <span className="text-xl">{user?.displayName?.[0] ?? user?.username?.[0] ?? '?'}</span>}</div>
+      <div className="profile-hero">
+        <div className="flex items-start justify-between w-full">
+          <div className="flex items-start gap-4">
+            <div className="avatar-placeholder" style={{ width: 72, height: 72 }}>
+              {user?.displayName?.[0] ?? user?.username?.[0] ?? '?'}
+            </div>
+            <div>
+              <div className="text-2xl font-bold">{user?.displayName}</div>
+              <div className="muted">@{user?.username}</div>
+              <div className="mt-2 muted">{user?.bio}</div>
+
+              <div className="profile-stats mt-3">
+                <div>
+                  <div className="font-semibold">{user?.tweetsCount}</div>
+                  <div className="muted text-sm">Tweets</div>
+                </div>
+                <div>
+                  <div className="font-semibold">{localFollowersCount}</div>
+                  <div className="muted text-sm">Followers</div>
+                </div>
+                <div>
+                  <div className="font-semibold">{user?.followingCount}</div>
+                  <div className="muted text-sm">Following</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div>
-            <div className="text-xl font-bold">{user?.displayName}</div>
-            <div className="text-sm text-gray-600">@{user?.username}</div>
-            <div className="mt-2 text-sm">{user?.bio}</div>
-            <div className="mt-3 text-sm text-gray-600">{user?.tweetsCount} Tweets • {localFollowersCount} Followers • {user?.followingCount} Following</div>
             {currentUsername !== user?.username && (
-              <div className="mt-3">
+              <div>
                 <button
-                  onClick={async () => {
-                    setFollowError(null)
-                    try {
-                      if (isFollowing) {
-                        setIsFollowing(false)
-                        setLocalFollowersCount((n) => Math.max(0, n - 1))
-                        await unfollowUser(user.username).unwrap()
-                      } else {
-                        setIsFollowing(true)
-                        setLocalFollowersCount((n) => n + 1)
-                        await followUser(user.username).unwrap()
-                      }
-                    } catch (err) {
-                      setFollowError(err?.data?.message || 'Follow action failed')
-                      setIsFollowing((v) => !v)
-                      setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
-                    }
-                  }}
-                  disabled={followingLoading || unfollowLoading}
-                  className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
+                  onClick={handleFollowToggle}
+                  disabled={followLoading || unfollowLoading}
+                  className={isFollowing ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'}
                 >
-                  {followingLoading || unfollowLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
+                  {followLoading || unfollowLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
                 </button>
-                {followError && <div className="text-red-600 mt-2">{followError}</div>}
+                {followError && <div className="text-red-500 mt-2">{followError}</div>}
               </div>
             )}
           </div>
@@ -113,21 +122,21 @@ export default function ProfilePage() {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-2">Tweets</h2>
+        <h2 className="text-lg font-semibold mb-2 mt-4">Tweets</h2>
 
-        {isLoading && page === 1 && <div>Loading tweets...</div>}
-        {isError && page === 1 && <div className="text-red-600">{getErrorMessage(error) || 'Failed to load tweets'}</div>}
-        {!isLoading && !isError && tweets.length === 0 && <div>No tweets yet.</div>}
+        {loadingTweets && page === 1 && <div>Loading tweets...</div>}
+        {tweetsError && page === 1 && <div className="text-red-600">{tweetsError?.data?.message || 'Failed to load tweets'}</div>}
+        {!loadingTweets && !tweetsError && tweets.length === 0 && <div>No tweets yet.</div>}
 
-        <div>
+        <div className="tweet-list">
           {tweets.map((t) => (
             <TweetCard key={t.id} tweet={t} />
           ))}
         </div>
 
-        {data?.pagination?.hasMore && (
+        {tweetsData?.pagination?.hasMore && (
           <div className="text-center mt-4">
-            <button onClick={handleLoadMore} disabled={isFetching} className="px-4 py-2 bg-blue-600 text-white rounded">
+            <button onClick={handleLoadMore} disabled={isFetching} className="btn-primary">
               {isFetching ? 'Loading...' : 'Load more'}
             </button>
           </div>

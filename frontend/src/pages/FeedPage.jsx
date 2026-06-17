@@ -49,22 +49,29 @@ export default function FeedPage() {
   }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Feed</h1>
+    <div className="p-4 max-w-2xl mx-auto">
+      <div className="page-header mb-4">
+        <div>
+          <h1 className="text-2xl font-bold">Feed</h1>
+          <div className="muted text-sm">Latest from people you follow</div>
+        </div>
+      </div>
 
-      <TweetComposer onCreated={handleCreated} />
+      <div className="composer-block">
+        <TweetComposer onCreated={handleCreated} />
+      </div>
 
-      {isLoading && page === 1 && <div>Loading feed...</div>}
+      {isLoading && page === 1 && <div className="p-3">Loading feed...</div>}
 
       {isError && page === 1 && (
-        <div className="text-red-600">{getErrorMessage(error) || 'Failed to load feed'}</div>
+        <div className="p-3 text-red-600">{getErrorMessage(error) || 'Failed to load feed'}</div>
       )}
 
-      {!isLoading && !isError && tweets.length === 0 && <div>Your timeline is empty.
+      {!isLoading && !isError && tweets.length === 0 && (
+        <div className="p-3 muted">Your timeline is empty. Search for users and start following people to build your feed.</div>
+      )}
 
-Search for users and start following people to build your feed.</div>}
-
-      <div>
+      <div className="tweet-list mt-3">
         {tweets.map((t) => (
           <TweetCard key={t.id} tweet={t} />
         ))}
@@ -75,7 +82,7 @@ Search for users and start following people to build your feed.</div>}
           <button
             onClick={handleLoadMore}
             disabled={isFetching}
-            className="px-4 py-2 bg-blue-600 text-white rounded"
+            className="btn-primary"
           >
             {isFetching ? 'Loading...' : 'Load more'}
           </button>

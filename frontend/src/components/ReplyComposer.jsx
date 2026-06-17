@@ -45,28 +45,32 @@ export default function ReplyComposer({ tweetId, onCreated }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded mb-4 border">
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Write a reply"
-        rows={3}
-        className="w-full border rounded p-2"
-      />
-      <div className="flex items-center justify-between mt-2">
-        <div className="text-sm text-gray-600">{content.length}/280</div>
-        <div className="flex items-center space-x-2">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
-          >
-            {isLoading ? 'Replying...' : 'Reply'}
-          </button>
+    <form onSubmit={handleSubmit} className="composer">
+      <div className="composer-body">
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Write a reply"
+          rows={3}
+          className="composer-textarea"
+        />
+
+        <div className="composer-footer">
+          <div className="composer-counter">{content.length}/280</div>
+          <div>
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="btn-primary disabled:opacity-50"
+            >
+              {isLoading ? 'Replying...' : 'Reply'}
+            </button>
+          </div>
         </div>
+
+        {localError && <div className="text-red-500 mt-2">{localError}</div>}
+        {!localError && error && <div className="text-red-500 mt-2">{getErrorMessage(error) || 'Failed to create reply'}</div>}
       </div>
-      {localError && <div className="text-red-600 mt-2">{localError}</div>}
-      {!localError && error && <div className="text-red-600 mt-2">{getErrorMessage(error) || 'Failed to create reply'}</div>}
     </form>
   )
 }

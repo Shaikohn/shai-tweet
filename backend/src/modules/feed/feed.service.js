@@ -16,6 +16,7 @@ export async function getFeedForUser(userId, page = 1, limit = 20) {
     parentTweetId: row.parent_tweet_id ?? null,
     createdAt: row.created_at ? (row.created_at instanceof Date ? row.created_at.toISOString() : new Date(row.created_at).toISOString()) : null,
     likesCount: Number(row.likes_count ?? 0),
+    repliesCount: Number(row.replies_count ?? 0),
     likedByCurrentUser: Boolean(row.liked_by_current_user),
     author: { id: row.user_id, username: row.username },
   }));

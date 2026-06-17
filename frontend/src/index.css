@@ -1,1 +1,265 @@
 @import "tailwindcss";
+
+:root{
+	--bg: #0F172A;
+	--surface: #111827;
+	--surface-hover: #1F2937;
+	--border: #374151;
+	--primary: #3B82F6;
+	--primary-hover: #2563EB;
+	--success: #22C55E;
+	--danger: #EF4444;
+	--text-primary: #F9FAFB;
+	--text-secondary: #9CA3AF;
+}
+
+/* App background and base text color */
+html, body, #root {
+	background-color: var(--bg);
+	color: var(--text-primary);
+}
+
+/* Reusable surface/card */
+.card {
+	background-color: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	padding: 1rem;
+	margin-bottom: 1rem;
+}
+
+.card-hover:hover {
+	background-color: var(--surface-hover);
+}
+
+/* Buttons */
+.btn-primary {
+	background-color: var(--primary);
+	color: var(--text-primary);
+	padding: 0.36rem 0.9rem;
+	border-radius: 0.5rem;
+	border: none;
+	font-weight: 600;
+	box-shadow: 0 1px 0 rgba(0,0,0,0.12);
+	transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms;
+	cursor: pointer;
+}
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(59,130,246,0.12); }
+.btn-primary:disabled { opacity: 0.5; transform: none; box-shadow: none; cursor: not-allowed; }
+
+.btn-secondary {
+	background-color: transparent;
+	color: var(--text-primary);
+	border: 1px solid var(--border);
+	padding: 0.45rem 0.7rem;
+	border-radius: 0.5rem;
+	cursor: pointer;
+}
+.btn-secondary:disabled { cursor: not-allowed; opacity: 0.6; }
+
+/* Pill modifier for compact rounded buttons */
+.btn-pill { border-radius: 9999px; padding: 0.28rem 0.9rem; }
+
+/* Inputs */
+.input-dark {
+	background-color: var(--surface);
+	color: var(--text-primary);
+	border: 1px solid var(--border);
+	padding: 0.5rem 0.6rem;
+	border-radius: 0.5rem;
+}
+.input-dark:focus{
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+	border-color: var(--primary);
+}
+
+/* Avatar placeholder */
+.avatar-placeholder {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--surface-hover);
+	color: var(--text-primary);
+	border-radius: 9999px;
+	width: 3rem;
+	height: 3rem;
+	font-weight: 600;
+}
+
+/* Header layout */
+.app-header {
+	background-color: var(--surface);
+	border-bottom: 1px solid var(--border);
+}
+
+.nav-link { color: var(--text-secondary); }
+.nav-link:hover { color: var(--text-primary); }
+
+/* Page header */
+.page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding: 0.75rem 0;
+}
+
+/* Tweet card: compact social-style post */
+.tweet-card {
+	background-color: transparent;
+	padding: 0.5rem 0.5rem;
+	border-bottom: 1px solid rgba(31,41,55,0.8); /* slate-800/80 */
+	border-radius: 0;
+	transition: background-color 160ms ease;
+}
+.tweet-card:hover {
+	background-color: rgba(15,23,34,0.35); /* hover:bg-slate-900/40 */
+}
+
+.tweet-card:last-child { border-bottom: none; }
+
+.tweet-row { display: flex; gap: 0.6rem; align-items: flex-start; }
+.tweet-avatar { width: 44px; height: 44px; border-radius: 9999px; flex: 0 0 44px; }
+.tweet-body { flex: 1 1 auto; min-width: 0; }
+.tweet-author { display: flex; align-items: center; gap: 0.5rem; }
+.tweet-author .name { font-weight: 600; color: var(--text-primary); }
+.tweet-author .handle { color: var(--text-secondary); font-size: 0.9rem; }
+.tweet-content { margin-top: 0.25rem; color: var(--text-primary); }
+
+.tweet-actions { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.4rem; }
+.action-btn {
+	display: inline-flex; align-items: center; gap: 0.4rem;
+	padding: 0.25rem 0.5rem; border-radius: 0.45rem; font-size: 0.9rem;
+	color: var(--text-secondary); background: transparent; border: 1px solid transparent;
+	cursor: pointer;
+}
+.action-btn:hover { color: var(--text-primary); }
+.action-btn:disabled { cursor: not-allowed; }
+.like-badge { color: #FB7185; font-weight: 600; }
+
+/* Composer: avatar left, textarea right */
+.composer {
+	display: flex; gap: 0.65rem; align-items: flex-start; padding: 0.15rem 0; border-radius: 0.5rem;
+	background: transparent;
+	border: none;
+}
+.composer-avatar { flex: 0 0 40px; }
+.composer-body { flex: 1 1 auto; display: flex; flex-direction: column; gap: 0.35rem; }
+.composer-textarea { width: 100%; min-height: 36px; max-height: 180px; resize: vertical; border-radius: 0.5rem; padding: 0.45rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); color: var(--text-primary); }
+.composer-textarea:focus{ outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.10); border-color: var(--primary); }
+.composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.composer-counter { color: var(--text-secondary); font-size: 0.85rem; }
+
+/* Search result card */
+.search-result { background-color: transparent; padding: 0.6rem 0.5rem; display:flex; gap:0.75rem; align-items:center; border-bottom: 1px solid rgba(31,41,55,0.6); }
+.search-result:hover { background-color: rgba(15,23,34,0.25); }
+.search-result .bio { color: var(--text-secondary); font-size: 0.92rem }
+.search-result:last-child { border-bottom: none }
+
+@media (max-width: 640px) {
+	.search-result { flex-direction: column; align-items: flex-start; }
+	.search-result .result-action { margin-top: 0.5rem; }
+}
+
+/* Profile header */
+.profile-header { display:flex; gap:1rem; align-items:center; padding:0.6rem; border-radius:0.5rem }
+.profile-stats { display:flex; gap:1rem; color:var(--text-secondary); align-items:center }
+
+/* Auth hero and panel for Login/Register pages */
+.auth-hero { display: grid; gap: 1rem; align-items: center; }
+@media (min-width: 768px) {
+	.auth-hero { grid-template-columns: 1fr 380px; align-items: start; }
+}
+.auth-headline { font-size: 1.75rem; line-height: 1.1; }
+.auth-support { color: var(--text-secondary); margin-top: 0.5rem; }
+.auth-panel { display: flex; align-items: center; justify-content: center; }
+.auth-card { width: 100%; max-width: 420px; }
+
+/* Enhanced auth landing hero for public pages */
+.auth-hero-landing { display: grid; gap: 1.25rem; align-items: start; }
+@media (min-width: 900px) {
+	.auth-hero-landing { grid-template-columns: 1fr 420px; gap: 2rem; }
+}
+.hero-left .eyebrow { text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); font-size: 0.8rem; }
+.hero-left .auth-headline { font-size: 2rem; margin-top: 0.25rem; }
+.hero-left .auth-support { color: var(--text-secondary); margin-top: 0.5rem; max-width: 48ch; }
+
+.feature-pills { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.75rem }
+.pill { display:inline-block; padding:0.28rem 0.6rem; border-radius:9999px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.02); color:var(--text-primary); font-size:0.85rem }
+
+.mock-panel { margin-top:1rem; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border: 1px solid rgba(255,255,255,0.02); border-radius: 0.75rem; padding: 0.6rem; }
+.mock-tweet { display:flex; gap:0.6rem; align-items:flex-start; padding:0.45rem 0; border-bottom: 1px solid rgba(255,255,255,0.01); }
+.mock-tweet:last-child { border-bottom: none; }
+.mock-body .muted { color: var(--text-secondary); }
+
+/* Ensure auth card looks compact on right side */
+.auth-panel .auth-card { background: var(--surface); border: 1px solid var(--border); padding: 1rem; border-radius: 0.75rem; box-shadow: 0 6px 18px rgba(2,6,23,0.6); }
+
+@media (max-width: 640px) {
+	.mock-panel { display: none; }
+	.hero-left .auth-headline { font-size: 1.5rem; }
+}
+
+/* Small button */
+.btn-sm { padding: 0.25rem 0.5rem; font-size: 0.85rem; border-radius: 0.45rem; }
+
+/* Composer block spacing (no heavy background) */
+.composer-block {
+	padding: 0.25rem 0;
+	margin-bottom: 0.75rem;
+}
+
+/* Profile hero (less boxed than card) */
+.profile-hero { display:flex; gap:1rem; align-items:center; padding:0.6rem 0.5rem; border-bottom: 1px solid rgba(31,41,55,0.35); }
+
+/* Result action: align to end on desktop */
+.result-action { margin-left: auto; display:flex; align-items:center }
+
+/* Subtle profile action for search rows */
+.search-result .result-action .btn-secondary {
+	background: transparent;
+	border: none;
+	color: var(--text-secondary);
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.45rem;
+	font-weight: 600;
+}
+.search-result .result-action .btn-secondary:hover {
+	color: var(--text-primary);
+	text-decoration: underline;
+}
+
+/* Feed container to group composer + tweet list for a timeline feel */
+.feed-container {
+	/* avoid wrapping tweets in a heavy surface by default */
+	background: transparent;
+	border: none;
+	padding: 0;
+	border-radius: 0;
+	overflow: visible;
+}
+.tweet-list { display: block; }
+
+/* Auth page center: center content below the navbar */
+.auth-page-center { min-height: calc(100vh - 64px); display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+
+/* Auth card: clean, centered product card */
+.auth-card {
+	width: 100%;
+	max-width: 28rem; /* ~448px */
+	background: var(--surface);
+	border: 1px solid rgba(255,255,255,0.04);
+	padding: 1.25rem;
+	border-radius: 1rem; /* rounded-2xl feel */
+	box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+}
+.auth-card .auth-brand { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.auth-card .auth-sub { color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.25rem; }
+.auth-card .auth-title { font-size: 1.25rem; font-weight: 700; margin-top: 0.9rem; }
+.auth-card .auth-desc { color: var(--text-secondary); margin-top: 0.25rem; margin-bottom: 0.75rem; }
+.auth-card .form-actions { margin-top: 0.5rem; }
+
+/* Small utility */
+.muted { color: var(--text-secondary) }
+

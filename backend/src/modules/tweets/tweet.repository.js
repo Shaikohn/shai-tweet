@@ -50,6 +50,11 @@ export async function findRepliesByParentId(parentTweetId, limit, offset, curren
   const result = await pool.query(
     `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id, u.username,
             COUNT(l.user_id) AS likes_count,
+            (
+              SELECT COUNT(*) FROM tweets replies
+              WHERE replies.parent_tweet_id = t.id
+                AND replies.deleted_at IS NULL
+            ) AS replies_count,
             ($2::uuid IS NOT NULL AND EXISTS (SELECT 1 FROM likes current_like WHERE current_like.tweet_id = t.id AND current_like.user_id = $2::uuid)) AS liked_by_current_user
      FROM tweets t
      LEFT JOIN likes l ON l.tweet_id = t.id

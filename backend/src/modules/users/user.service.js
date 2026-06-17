@@ -23,6 +23,7 @@ export async function getUserTweets(username, page = 1, limit = 20, currentUserI
     parentTweetId: row.parent_tweet_id ?? null,
     createdAt: row.created_at ? (row.created_at instanceof Date ? row.created_at.toISOString() : new Date(row.created_at).toISOString()) : null,
     likesCount: Number(row.likes_count ?? 0),
+    repliesCount: Number(row.replies_count ?? 0),
     author: { id: user.id, username: user.username },
     likedByCurrentUser: Boolean(row.liked_by_current_user ?? false),
   }));

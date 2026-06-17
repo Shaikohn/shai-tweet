@@ -8,6 +8,7 @@ export default function TweetCard({ tweet }) {
 
   const [localLiked, setLocalLiked] = useState(Boolean(tweet.likedByCurrentUser))
   const [localLikes, setLocalLikes] = useState(likesCount ?? 0)
+  const [localReplies, setLocalReplies] = useState(Number(tweet.repliesCount ?? 0))
   const [localError, setLocalError] = useState(null)
 
   const [likeTweet, { isLoading: liking }] = useLikeTweetMutation()
@@ -17,8 +18,9 @@ export default function TweetCard({ tweet }) {
   useEffect(() => {
     setLocalLiked(Boolean(tweet.likedByCurrentUser))
     setLocalLikes(likesCount ?? 0)
+    setLocalReplies(Number(tweet.repliesCount ?? 0))
     setLocalError(null)
-  }, [id, likesCount, tweet.likedByCurrentUser])
+  }, [id, likesCount, tweet.likedByCurrentUser, tweet.repliesCount])
 
   const handleLike = async () => {
     if (loading) return
@@ -49,33 +51,50 @@ export default function TweetCard({ tweet }) {
   }
 
   return (
-    <article className="bg-white border rounded p-4 mb-4">
-      <div className="flex items-start justify-between mb-2">
-        <div className="text-sm font-semibold">@{author?.username}</div>
-        <div className="text-xs text-gray-500 ml-2">{date}</div>
-      </div>
-      <p className="text-gray-800 mb-3 whitespace-pre-wrap">{content}</p>
-      {imageUrl && (
-        <div className="mb-3">
-          <img src={imageUrl} alt="tweet" className="w-full rounded" />
+    <article className="tweet-card">
+      <div className="tweet-row">
+        <div className="tweet-avatar">
+          <div className="avatar-placeholder" style={{ width: 44, height: 44 }}>
+            {author?.username?.[0]?.toUpperCase() ?? '?'}
+          </div>
         </div>
-      )}
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-gray-600">Likes: {localLikes}</div>
-        <div className="flex items-center space-x-2">
-          <Link to={`/tweets/${id}`} className="text-sm text-blue-600 hover:underline">Reply</Link>
-          {localLiked ? (
-            <button onClick={handleUnlike} disabled={loading} className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50">
-              {unliking ? '...' : 'Unlike'}
-            </button>
-          ) : (
-            <button onClick={handleLike} disabled={loading} className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50">
-              {liking ? '...' : 'Like'}
-            </button>
+
+        <div className="tweet-body">
+          <div className="tweet-author">
+            <Link to={`/profile/${author?.username}`} className="name">{author?.displayName || author?.username}</Link>
+            <span className="handle">· {date}</span>
+          </div>
+
+          <div className="tweet-content">{content}</div>
+
+          {imageUrl && (
+            <div className="mt-2">
+              <img src={imageUrl} alt="tweet" className="w-full rounded" />
+            </div>
           )}
+
+          <div className="tweet-actions">
+            {localLiked ? (
+              <button aria-pressed="true" onClick={handleUnlike} disabled={loading} className="action-btn">
+                <span className="like-badge">♥</span>
+                <span className="muted">{localLikes}</span>
+              </button>
+            ) : (
+              <button aria-pressed="false" onClick={handleLike} disabled={loading} className="action-btn">
+                <span className="muted">♡</span>
+                <span className="muted">{localLikes}</span>
+              </button>
+            )}
+
+            <Link to={`/tweets/${id}`} className="action-btn muted">
+              <span>Reply</span>
+              <span className="muted">{localReplies ?? 0}</span>
+            </Link>
+          </div>
         </div>
       </div>
-      {localError && <div className="text-red-600 mt-2">{localError}</div>}
+
+      {localError && <div className="text-red-500 mt-2">{localError}</div>}
     </article>
   )
 }

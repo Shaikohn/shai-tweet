@@ -149,6 +149,43 @@ describe('GET /api/feed - integration', () => {
     expect(ids).not.toContain(tweetB.id);
   });
 
+  it('does not include replies in the main feed', async () => {
+    const author = await createAuthenticatedUser();
+    const other = await createAuthenticatedUser();
+
+    // author posts a parent tweet
+    const pRes = await createTweet(author.token, 'Parent tweet');
+    expect(pRes.status).toBe(201);
+    const parent = pRes.body.tweet;
+
+    // other user replies to that parent
+    const replyRes = await request(app).post(`/api/tweets/${parent.id}/replies`).set('Authorization', `Bearer ${other.token}`).send({ content: 'A reply' });
+    expect(replyRes.status).toBe(201);
+    const reply = replyRes.body.tweet;
+
+    // author follows the other user so their tweets would appear if not filtered
+    const followRes = await followUser(author.token, other.user.username);
+    expect(followRes.status).toBe(200);
+
+    const feedRes = await request(app).get('/api/feed').set('Authorization', `Bearer ${author.token}`);
+    expect(feedRes.status).toBe(200);
+    const ids = feedRes.body.tweets.map((t) => t.id);
+
+    // parent should be present, reply should NOT be present in the main feed
+    expect(ids).toContain(parent.id);
+    expect(ids).not.toContain(reply.id);
+
+    const parentInFeed = feedRes.body.tweets.find((t) => t.id === parent.id);
+    expect(parentInFeed).toBeDefined();
+    expect(parentInFeed.repliesCount).toBe(1);
+
+    // ensure reply is still available via the thread replies endpoint
+    const threadRes = await request(app).get(`/api/tweets/${parent.id}/replies`);
+    expect(threadRes.status).toBe(200);
+    const threadIds = threadRes.body.tweets.map((t) => t.id);
+    expect(threadIds).toContain(reply.id);
+  });
+
   it('rejects unauthenticated requests with HTTP 401', async () => {
     const res = await request(app).get('/api/feed');
     expect(res.status).toBe(401);

@@ -25,42 +25,52 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full rounded border px-3 py-2" />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full rounded border px-3 py-2" />
-        </div>
-        <div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-        </div>
-        {error && (
-          <div className="text-red-600">
-            {(() => {
-              const e = error
-              if (!e) return 'Login failed'
-              if (e.data) {
-                if (typeof e.data === 'string') return e.data
-                if (e.data.message) return e.data.message
-                if (e.data.error) return e.data.error
-                if (Array.isArray(e.data.errors) && e.data.errors.length) return e.data.errors[0].msg || e.data.errors[0].message
-                return JSON.stringify(e.data)
-              }
-              return String(e.error || 'Login failed')
-            })()}
+    <div className="auth-page-center">
+      <div className="auth-card">
+        <div className="auth-brand">ShaiTweet</div>
+        <div className="auth-sub">A focused, modern social timeline.</div>
+
+        <div className="auth-title">Welcome back</div>
+        <div className="auth-desc">Log in to continue your timeline.</div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium">Email</label>
+            <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full input-dark" />
           </div>
-        )}
-      </form>
-      <p className="mt-4 text-sm">
-        Don't have an account? <Link to="/register" className="text-blue-600">Register</Link>
-      </p>
+          <div>
+            <label className="block text-sm font-medium">Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full input-dark" />
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="w-full btn-primary btn-pill" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
+          </div>
+
+          {error && (
+            <div className="text-red-600">
+              {(() => {
+                const e = error
+                if (!e) return 'Login failed'
+                if (e.data) {
+                  if (typeof e.data === 'string') return e.data
+                  if (e.data.message) return e.data.message
+                  if (e.data.error) return e.data.error
+                  if (Array.isArray(e.data.errors) && e.data.errors.length) return e.data.errors[0].msg || e.data.errors[0].message
+                  return JSON.stringify(e.data)
+                }
+                return String(e.error || 'Login failed')
+              })()}
+            </div>
+          )}
+
+          <p className="mt-2 text-sm muted">
+            Don't have an account? <Link to="/register" className="nav-link cursor-pointer">Register</Link>
+          </p>
+        </form>
+      </div>
     </div>
   )
 }
