@@ -1,7 +1,6 @@
-import './App.css'
+import AppRouter from './routes/AppRouter'
 
-function App() {
-  return <h1>ShaiTweet</h1>;
+export default function App() {
+  return <AppRouter />
 }
 
-export default App
