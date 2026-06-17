@@ -5,7 +5,7 @@ export default function TweetCard({ tweet }) {
   const { id, author, content, createdAt, likesCount, imageUrl } = tweet
   const date = createdAt ? new Date(createdAt).toLocaleString() : ''
 
-  const [localLiked, setLocalLiked] = useState(false)
+  const [localLiked, setLocalLiked] = useState(Boolean(tweet.likedByCurrentUser))
   const [localLikes, setLocalLikes] = useState(likesCount ?? 0)
   const [localError, setLocalError] = useState(null)
 
@@ -14,10 +14,10 @@ export default function TweetCard({ tweet }) {
   const loading = liking || unliking
 
   useEffect(() => {
-    setLocalLiked(false)
+    setLocalLiked(Boolean(tweet.likedByCurrentUser))
     setLocalLikes(likesCount ?? 0)
     setLocalError(null)
-  }, [id, likesCount])
+  }, [id, likesCount, tweet.likedByCurrentUser])
 
   const handleLike = async () => {
     if (loading) return
