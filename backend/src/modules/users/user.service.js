@@ -97,8 +97,8 @@ export async function searchUsers(q) {
   return users;
 }
 
-export async function getUserProfile(username) {
-  const row = await repo.findUserProfileByUsername(username);
+export async function getUserProfile(username, currentUserId = null) {
+  const row = await repo.findUserProfileByUsername(username, currentUserId);
   if (!row) {
     const err = new Error('User not found');
     err.status = 404;
@@ -114,6 +114,7 @@ export async function getUserProfile(username) {
     followersCount: Number(row.followers_count ?? 0),
     followingCount: Number(row.following_count ?? 0),
     tweetsCount: Number(row.tweets_count ?? 0),
+    followedByCurrentUser: Boolean(row.followed_by_current_user ?? false),
   };
 
   return user;

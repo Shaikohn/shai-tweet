@@ -34,7 +34,6 @@ export default function ProfilePage() {
   useEffect(() => {
     setTweets([])
     setPage(1)
-    setIsFollowing(false)
     setFollowError(null)
   }, [username])
 
@@ -51,6 +50,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
+    setIsFollowing(Boolean(profileData?.user?.followedByCurrentUser ?? false))
   }, [profileData])
 
   const handleLoadMore = () => setPage((p) => p + 1)

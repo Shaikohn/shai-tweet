@@ -39,7 +39,8 @@ export async function searchUsers(req, res) {
 export async function getProfile(req, res) {
   try {
     const username = req.params.username;
-    const user = await service.getUserProfile(username);
+    const currentUserId = req.user ? req.user.id : null;
+    const user = await service.getUserProfile(username, currentUserId);
     return res.status(200).json({ user });
   } catch (err) {
     if (err && err.status) {

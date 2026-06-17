@@ -9,16 +9,18 @@ export async function findByUsernameLower(username) {
   return result.rows[0];
 }
 
-export async function findUserProfileByUsername(username) {
+export async function findUserProfileByUsername(username, currentUserId = null) {
   if (!username) return null;
+  // If currentUserId is provided, compute whether the current user follows this profile.
   const result = await pool.query(
     `SELECT u.id, u.username, u.display_name, u.bio, u.avatar_url,
             (SELECT COUNT(*) FROM follows f WHERE f.following_id = u.id) AS followers_count,
             (SELECT COUNT(*) FROM follows f2 WHERE f2.follower_id = u.id) AS following_count,
-            (SELECT COUNT(*) FROM tweets t WHERE t.user_id = u.id AND t.deleted_at IS NULL) AS tweets_count
+            (SELECT COUNT(*) FROM tweets t WHERE t.user_id = u.id AND t.deleted_at IS NULL) AS tweets_count,
+            ($2::uuid IS NOT NULL AND EXISTS (SELECT 1 FROM follows f3 WHERE f3.follower_id = $2::uuid AND f3.following_id = u.id)) AS followed_by_current_user
      FROM users u
      WHERE LOWER(u.username) = $1`,
-    [username.trim().toLowerCase()]
+    [username.trim().toLowerCase(), currentUserId]
   );
 
   return result.rows[0];
