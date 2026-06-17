@@ -1,8 +1,51 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useLikeTweetMutation, useUnlikeTweetMutation } from '../services/api'
 
 export default function TweetCard({ tweet }) {
-  const { author, content, createdAt, likesCount, imageUrl } = tweet
+  const { id, author, content, createdAt, likesCount, imageUrl } = tweet
   const date = createdAt ? new Date(createdAt).toLocaleString() : ''
+
+  const [localLiked, setLocalLiked] = useState(false)
+  const [localLikes, setLocalLikes] = useState(likesCount ?? 0)
+  const [localError, setLocalError] = useState(null)
+
+  const [likeTweet, { isLoading: liking }] = useLikeTweetMutation()
+  const [unlikeTweet, { isLoading: unliking }] = useUnlikeTweetMutation()
+  const loading = liking || unliking
+
+  useEffect(() => {
+    setLocalLiked(false)
+    setLocalLikes(likesCount ?? 0)
+    setLocalError(null)
+  }, [id, likesCount])
+
+  const handleLike = async () => {
+    if (loading) return
+    setLocalError(null)
+    setLocalLiked(true)
+    setLocalLikes((n) => n + 1)
+    try {
+      await likeTweet(id).unwrap()
+    } catch (err) {
+      setLocalLiked(false)
+      setLocalLikes((n) => Math.max(0, n - 1))
+      setLocalError(err?.data?.message || 'Failed to like tweet')
+    }
+  }
+
+  const handleUnlike = async () => {
+    if (loading) return
+    setLocalError(null)
+    setLocalLiked(false)
+    setLocalLikes((n) => Math.max(0, n - 1))
+    try {
+      await unlikeTweet(id).unwrap()
+    } catch (err) {
+      setLocalLiked(true)
+      setLocalLikes((n) => n + 1)
+      setLocalError(err?.data?.message || 'Failed to unlike tweet')
+    }
+  }
 
   return (
     <article className="bg-white border rounded p-4 mb-4">
@@ -16,7 +59,21 @@ export default function TweetCard({ tweet }) {
           <img src={imageUrl} alt="tweet" className="w-full rounded" />
         </div>
       )}
-      <div className="text-sm text-gray-600">Likes: {likesCount ?? 0}</div>
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-600">Likes: {localLikes}</div>
+        <div>
+          {localLiked ? (
+            <button onClick={handleUnlike} disabled={loading} className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50">
+              {unliking ? '...' : 'Unlike'}
+            </button>
+          ) : (
+            <button onClick={handleLike} disabled={loading} className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50">
+              {liking ? '...' : 'Like'}
+            </button>
+          )}
+        </div>
+      </div>
+      {localError && <div className="text-red-600 mt-2">{localError}</div>}
     </article>
   )
 }

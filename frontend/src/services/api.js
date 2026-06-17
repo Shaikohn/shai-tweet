@@ -51,8 +51,20 @@ export const api = createApi({
 				body: { content },
 			}),
 		}),
+		likeTweet: builder.mutation({
+			query: (id) => ({
+				url: `${apiPrefix}/tweets/${id}/like`,
+				method: 'POST',
+			}),
+		}),
+		unlikeTweet: builder.mutation({
+			query: (id) => ({
+				url: `${apiPrefix}/tweets/${id}/like`,
+				method: 'DELETE',
+			}),
+		}),
 	}),
 })
 
-export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery, useCreateTweetMutation } = api
+export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery, useCreateTweetMutation, useLikeTweetMutation, useUnlikeTweetMutation } = api
 
