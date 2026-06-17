@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetTweetRepliesQuery } from '../services/api'
+import { useGetTweetRepliesQuery, useGetTweetByIdQuery } from '../services/api'
 import ReplyComposer from '../components/ReplyComposer'
 import TweetCard from '../components/TweetCard'
 
@@ -11,6 +11,7 @@ export default function ThreadPage() {
   const [replies, setReplies] = useState([])
 
   const { data, isLoading, isFetching, isError, error, refetch } = useGetTweetRepliesQuery({ id, page, limit: LIMIT })
+  const { data: parentData, isLoading: parentLoading, isError: parentIsError, error: parentError, refetch: refetchParent } = useGetTweetByIdQuery(id)
 
   useEffect(() => {
     setReplies([])
@@ -40,7 +41,16 @@ export default function ThreadPage() {
       </div>
 
       <div className="mb-4">
-        <ReplyComposer tweetId={id} onCreated={async () => { setPage(1); await refetch() }} />
+        {parentLoading && <div>Loading original tweet...</div>}
+        {parentIsError && <div className="text-red-600">{parentError?.data?.message || 'Failed to load tweet'}</div>}
+        {parentData && parentData.tweet && (
+          <div className="mb-3">
+            <div className="muted text-sm mb-2">Original tweet</div>
+            <TweetCard tweet={parentData.tweet} />
+          </div>
+        )}
+
+        <ReplyComposer tweetId={id} onCreated={async () => { setPage(1); await refetch(); if (refetchParent) await refetchParent(); }} />
       </div>
 
       {isLoading && page === 1 && <div>Loading replies...</div>}

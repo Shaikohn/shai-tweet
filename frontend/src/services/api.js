@@ -66,6 +66,12 @@ export const api = createApi({
 				method: 'GET',
 			}),
 		}),
+		getTweetById: builder.query({
+			query: (id) => ({
+				url: `${apiPrefix}/tweets/${id}`,
+				method: 'GET',
+			}),
+		}),
 		getUserTweets: builder.query({
 			query: ({ username, page = 1, limit = 20 } = {}) => ({
 				url: `${apiPrefix}/users/${username}/tweets?page=${page}&limit=${limit}`,
@@ -124,7 +130,8 @@ export const {
 	useUnlikeTweetMutation,
 	useGetUserProfileQuery,
 	useGetUserTweetsQuery,
-	useGetTweetRepliesQuery,
+useGetTweetRepliesQuery,
+useGetTweetByIdQuery,
 	useSearchUsersQuery,
 	useFollowUserMutation,
 	useUnfollowUserMutation,

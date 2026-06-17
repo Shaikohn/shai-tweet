@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/', authMiddleware, controller.create);
 router.get('/:id/replies', optionalAuthMiddleware, controller.getReplies);
 router.post('/:id/replies', authMiddleware, controller.createReply);
+router.get('/:id', optionalAuthMiddleware, controller.getTweet);
 router.delete('/:id', authMiddleware, controller.remove);
 
 export default router;

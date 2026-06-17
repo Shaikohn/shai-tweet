@@ -202,4 +202,38 @@ describe('GET /api/tweets/:id/replies - thread retrieval integration', () => {
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty('message', 'Tweet not found');
   });
+
+  it('GET /api/tweets/:id returns tweet details including repliesCount and liked flag', async () => {
+    const author = await createAuthenticatedUser();
+    const r1 = await createAuthenticatedUser();
+    const r2 = await createAuthenticatedUser();
+
+    const pRes = await createTweet(author.token, 'Parent single');
+    expect(pRes.status).toBe(201);
+    const parent = pRes.body.tweet;
+
+    const aRes = await createReply(r1.token, parent.id, 'Reply one');
+    expect(aRes.status).toBe(201);
+    const bRes = await createReply(r2.token, parent.id, 'Reply two');
+    expect(bRes.status).toBe(201);
+
+    const res = await request(app).get(`/api/tweets/${parent.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('tweet');
+    const t = res.body.tweet;
+    expect(t).toHaveProperty('id', parent.id);
+    expect(t).toHaveProperty('content', parent.content);
+    expect(t).toHaveProperty('repliesCount', 2);
+    expect(t).toHaveProperty('likesCount');
+    expect(t.likedByCurrentUser).toBe(false);
+
+    const liker = await createAuthenticatedUser();
+    const likeRes = await likeTweet(liker.token, parent.id);
+    expect(likeRes.status).toBe(200);
+
+    const resAuth = await request(app).get(`/api/tweets/${parent.id}`).set('Authorization', `Bearer ${liker.token}`);
+    expect(resAuth.status).toBe(200);
+    expect(resAuth.body.tweet.likesCount).toBe(1);
+    expect(resAuth.body.tweet.likedByCurrentUser).toBe(true);
+  });
 });

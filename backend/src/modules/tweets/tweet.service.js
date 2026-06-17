@@ -146,6 +146,35 @@ export async function getReplies(parentTweetId, page = 1, limit = 20, currentUse
   };
 }
 
+export async function getTweetById(tweetId, currentUserId = null) {
+  if (!isValidUuid(tweetId)) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const row = await repo.findTweetWithCountsById(tweetId, currentUserId);
+  if (!row) {
+    const err = new Error('Tweet not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const tweet = {
+    id: row.id,
+    content: row.content,
+    imageUrl: row.image_url ?? null,
+    parentTweetId: row.parent_tweet_id ?? null,
+    createdAt: row.created_at ? (row.created_at instanceof Date ? row.created_at.toISOString() : new Date(row.created_at).toISOString()) : null,
+    likesCount: Number(row.likes_count ?? 0),
+    repliesCount: Number(row.replies_count ?? 0),
+    likedByCurrentUser: Boolean(row.liked_by_current_user ?? false),
+    author: { id: row.user_id, username: row.username },
+  };
+
+  return tweet;
+}
+
 export async function deleteTweet(tweetId, user) {
   if (!tweetId) {
     const err = new Error('Tweet not found');
