@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, setUser } from '../features/auth/authSlice'
-import { useGetMeQuery } from '../services/api'
+import { useGetMeQuery, api } from '../services/api'
 
 export default function Layout({ children }) {
   const user = useSelector((s) => s.auth.user)
@@ -20,8 +20,9 @@ export default function Layout({ children }) {
   }, [meData, dispatch])
 
   const handleLogout = () => {
-    dispatch(logout())
-    navigate('/login')
+    dispatch(logout());
+    dispatch(api.util.resetApiState());
+    navigate('/login');
   }
 
   return (

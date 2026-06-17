@@ -38,8 +38,14 @@ export const api = createApi({
 				method: 'GET',
 			}),
 		}),
+		getFeed: builder.query({
+			query: ({ page = 1, limit = 20 } = {}) => ({
+				url: `${apiPrefix}/feed?page=${page}&limit=${limit}`,
+				method: 'GET',
+			}),
+		}),
 	}),
 })
 
-export const { useLoginMutation, useRegisterMutation, useGetMeQuery } = api
+export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery } = api
 
