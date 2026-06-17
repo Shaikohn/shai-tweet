@@ -51,6 +51,18 @@ export const api = createApi({
 				body: { content },
 			}),
 		}),
+		getUserProfile: builder.query({
+			query: (username) => ({
+				url: `${apiPrefix}/users/${username}`,
+				method: 'GET',
+			}),
+		}),
+		getUserTweets: builder.query({
+			query: ({ username, page = 1, limit = 20 } = {}) => ({
+				url: `${apiPrefix}/users/${username}/tweets?page=${page}&limit=${limit}`,
+				method: 'GET',
+			}),
+		}),
 		likeTweet: builder.mutation({
 			query: (id) => ({
 				url: `${apiPrefix}/tweets/${id}/like`,
@@ -66,5 +78,15 @@ export const api = createApi({
 	}),
 })
 
-export const { useLoginMutation, useRegisterMutation, useGetMeQuery, useGetFeedQuery, useCreateTweetMutation, useLikeTweetMutation, useUnlikeTweetMutation } = api
+export const {
+	useLoginMutation,
+	useRegisterMutation,
+	useGetMeQuery,
+	useGetFeedQuery,
+	useCreateTweetMutation,
+	useLikeTweetMutation,
+	useUnlikeTweetMutation,
+	useGetUserProfileQuery,
+	useGetUserTweetsQuery,
+} = api
 
