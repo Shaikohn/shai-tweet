@@ -33,6 +33,7 @@ export default function Layout({ children }) {
             ShaiTweet
           </Link>
           <nav>
+            <Link to="/search" className="text-sm text-gray-600 mr-4">Search</Link>
             {token ? (
               <div className="flex items-center space-x-4">
                 <span className="text-sm">{user?.username}</span>

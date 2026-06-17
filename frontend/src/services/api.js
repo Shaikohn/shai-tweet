@@ -63,6 +63,24 @@ export const api = createApi({
 				method: 'GET',
 			}),
 		}),
+		searchUsers: builder.query({
+			query: (q) => ({
+				url: `${apiPrefix}/users/search?q=${encodeURIComponent(q ?? '')}`,
+				method: 'GET',
+			}),
+		}),
+		followUser: builder.mutation({
+			query: (username) => ({
+				url: `${apiPrefix}/users/${username}/follow`,
+				method: 'POST',
+			}),
+		}),
+		unfollowUser: builder.mutation({
+			query: (username) => ({
+				url: `${apiPrefix}/users/${username}/follow`,
+				method: 'DELETE',
+			}),
+		}),
 		likeTweet: builder.mutation({
 			query: (id) => ({
 				url: `${apiPrefix}/tweets/${id}/like`,
@@ -88,5 +106,8 @@ export const {
 	useUnlikeTweetMutation,
 	useGetUserProfileQuery,
 	useGetUserTweetsQuery,
+	useSearchUsersQuery,
+	useFollowUserMutation,
+	useUnfollowUserMutation,
 } = api
 

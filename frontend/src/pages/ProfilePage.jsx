@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useGetUserProfileQuery, useGetUserTweetsQuery } from '../services/api'
+import { useGetUserProfileQuery, useGetUserTweetsQuery, useFollowUserMutation, useUnfollowUserMutation } from '../services/api'
+import { useSelector } from 'react-redux'
 import TweetCard from '../components/TweetCard'
 
 const getErrorMessage = (err) => {
@@ -19,6 +20,13 @@ export default function ProfilePage() {
   const LIMIT = 20
   const [page, setPage] = useState(1)
   const [tweets, setTweets] = useState([])
+  const currentUsername = useSelector((s) => s.auth.user?.username)
+  const [isFollowing, setIsFollowing] = useState(false)
+  const [localFollowersCount, setLocalFollowersCount] = useState(0)
+  const [followError, setFollowError] = useState(null)
+
+  const [followUser, { isLoading: followingLoading }] = useFollowUserMutation()
+  const [unfollowUser, { isLoading: unfollowLoading }] = useUnfollowUserMutation()
 
   const { data: profileData, isLoading: loadingProfile, isError: profileError, error: profileErr } = useGetUserProfileQuery(username)
   const { data, isLoading, isFetching, isError, error, refetch } = useGetUserTweetsQuery({ username, page, limit: LIMIT })
@@ -26,6 +34,8 @@ export default function ProfilePage() {
   useEffect(() => {
     setTweets([])
     setPage(1)
+    setIsFollowing(false)
+    setFollowError(null)
   }, [username])
 
   useEffect(() => {
@@ -38,6 +48,10 @@ export default function ProfilePage() {
       return [...prev, ...additions]
     })
   }, [data, page])
+
+  useEffect(() => {
+    setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
+  }, [profileData])
 
   const handleLoadMore = () => setPage((p) => p + 1)
 
@@ -58,7 +72,36 @@ export default function ProfilePage() {
             <div className="text-xl font-bold">{user?.displayName}</div>
             <div className="text-sm text-gray-600">@{user?.username}</div>
             <div className="mt-2 text-sm">{user?.bio}</div>
-            <div className="mt-3 text-sm text-gray-600">{user?.tweetsCount} Tweets • {user?.followersCount} Followers • {user?.followingCount} Following</div>
+            <div className="mt-3 text-sm text-gray-600">{user?.tweetsCount} Tweets • {localFollowersCount} Followers • {user?.followingCount} Following</div>
+            {currentUsername !== user?.username && (
+              <div className="mt-3">
+                <button
+                  onClick={async () => {
+                    setFollowError(null)
+                    try {
+                      if (isFollowing) {
+                        setIsFollowing(false)
+                        setLocalFollowersCount((n) => Math.max(0, n - 1))
+                        await unfollowUser(user.username).unwrap()
+                      } else {
+                        setIsFollowing(true)
+                        setLocalFollowersCount((n) => n + 1)
+                        await followUser(user.username).unwrap()
+                      }
+                    } catch (err) {
+                      setFollowError(err?.data?.message || 'Follow action failed')
+                      setIsFollowing((v) => !v)
+                      setLocalFollowersCount(profileData?.user?.followersCount ?? 0)
+                    }
+                  }}
+                  disabled={followingLoading || unfollowLoading}
+                  className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-50"
+                >
+                  {followingLoading || unfollowLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}
+                </button>
+                {followError && <div className="text-red-600 mt-2">{followError}</div>}
+              </div>
+            )}
           </div>
         </div>
       </div>
