@@ -9,7 +9,8 @@ export async function getTweets(req, res) {
     const safePage = Number.isInteger(page) && page > 0 ? page : 1;
     const safeLimit = Number.isInteger(limit) && limit > 0 ? Math.min(limit, 50) : 20;
 
-    const result = await service.getUserTweets(username, safePage, safeLimit);
+    const currentUserId = req.user ? req.user.id : null;
+    const result = await service.getUserTweets(username, safePage, safeLimit, currentUserId);
     return res.status(200).json(result);
   } catch (err) {
     if (err && err.status) {

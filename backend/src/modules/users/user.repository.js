@@ -26,16 +26,19 @@ export async function findUserProfileByUsername(username, currentUserId = null) 
   return result.rows[0];
 }
 
-export async function findTweetsByUserId(userId, limit, offset) {
+export async function findTweetsByUserId(userId, limit, offset, currentUserId = null) {
   const result = await pool.query(
-    `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, COUNT(l.user_id) AS likes_count
+    `SELECT t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id, u.username,
+            COUNT(l.user_id) AS likes_count,
+            ($2::uuid IS NOT NULL AND EXISTS (SELECT 1 FROM likes current_like WHERE current_like.tweet_id = t.id AND current_like.user_id = $2::uuid)) AS liked_by_current_user
      FROM tweets t
+     JOIN users u ON u.id = t.user_id
      LEFT JOIN likes l ON l.tweet_id = t.id
      WHERE t.user_id = $1 AND t.deleted_at IS NULL
-     GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at
+     GROUP BY t.id, t.content, t.image_url, t.parent_tweet_id, t.created_at, t.user_id, u.username
      ORDER BY t.created_at DESC, t.id DESC
-     LIMIT $2 OFFSET $3`,
-    [userId, limit, offset]
+     LIMIT $3 OFFSET $4`,
+    [userId, currentUserId, limit, offset]
   );
 
   return result.rows;
