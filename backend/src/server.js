@@ -1,3 +1,9 @@
+import { config as dotenvConfig } from "dotenv";
+
+dotenvConfig({
+  path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
+});
+
 import app from "./app.js";
 import { testDatabaseConnection } from "./config/database.js";
 

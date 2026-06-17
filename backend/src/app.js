@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import pool from "./config/database.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import tweetRoutes from "./modules/tweets/tweet.routes.js";
@@ -10,6 +11,12 @@ import likeRoutes from "./modules/likes/like.routes.js";
 const app = express();
 
 app.use(express.json());
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+  })
+);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/tweets', tweetRoutes);
