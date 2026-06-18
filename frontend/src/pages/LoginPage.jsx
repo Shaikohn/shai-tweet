@@ -35,13 +35,13 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium">Email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full input-dark" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full input-dark" />
-          </div>
+              <label htmlFor="email" className="block text-sm font-medium">Email</label>
+              <input id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full input-dark" />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium">Password</label>
+              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full input-dark" />
+            </div>
 
           <div className="form-actions">
             <button type="submit" className="w-full btn-primary btn-pill" disabled={isLoading}>
