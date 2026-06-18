@@ -40,10 +40,15 @@ export async function login(req, res) {
 }
 
 export async function me(req, res) {
-  return res.status(200).json({
-    user: {
-      id: req.user.id,
-      username: req.user.username,
-    },
-  });
+  try {
+    const user = await service.getUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({ user });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }

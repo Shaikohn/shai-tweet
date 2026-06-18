@@ -20,3 +20,14 @@ export async function createUser({ email, passwordHash, username, displayName })
 
   return result.rows[0];
 }
+
+export async function findById(id) {
+  const result = await pool.query(
+    `SELECT id, email, username, display_name, bio, avatar_url, created_at
+     FROM users
+     WHERE id = $1`,
+    [id]
+  );
+
+  return result.rows[0];
+}

@@ -2,6 +2,21 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import * as repo from './auth.repository.js';
 
+export async function getUserById(userId) {
+  if (!userId) return null;
+  const row = await repo.findById(userId);
+  if (!row) return null;
+
+  return {
+    id: row.id,
+    email: row.email,
+    username: row.username,
+    displayName: row.display_name,
+    bio: row.bio ?? null,
+    avatarUrl: row.avatar_url ?? null,
+  };
+}
+
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const usernameRegex = /^[a-z0-9_]{3,30}$/;
 

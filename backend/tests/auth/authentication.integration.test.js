@@ -37,6 +37,11 @@ describe('GET /api/auth/me - integration', () => {
     expect(user).toHaveProperty('id');
     expect(user).toHaveProperty('username');
     expect(user.username).toBe(userPayload.username);
+    // ensure /me returns full user shape
+    expect(user).toHaveProperty('displayName');
+    expect(user.displayName).toBe(userPayload.displayName);
+    expect(user).toHaveProperty('bio');
+    expect(user).toHaveProperty('avatarUrl');
   });
 
   it('rejects missing token', async () => {

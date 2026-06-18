@@ -2,182 +2,28 @@
 
 ShaiTweet is a Twitter/X-inspired social platform built as part of an AI-assisted software engineering challenge.
 
-The project recreates the core Twitter/X experience, including authentication, timelines, social interactions, user profiles, personalized feeds, likes, follows, and reply threads.
+The project recreates core social networking functionality including authentication, personalized timelines, follows, likes, user profiles, search, and reply threads.
 
-The goal was not only to build a functional application, but also to demonstrate software architecture decisions, testing practices, development workflow, and effective use of AI-assisted development tools.
+## Features
 
----
+### Core Features
 
-# Runbook
-
-## Prerequisites
-
-Required software:
-
-* Node.js 22+
-* PostgreSQL 17+
-* npm 10+
-
-Verify installation:
-
-```bash
-node -v
-npm -v
-psql --version
-```
-
----
-
-## Clone Repository
-
-```bash
-git clone https://github.com/Shaikohn/shai-tweet
-cd shai-tweet
-```
-
----
-
-## Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-Create:
-
-```bash
-.env
-```
-
-using the provided:
-
-```bash
-.env.example
-```
-
-template.
-
-### Required Environment Variables
-
-| Variable          | Description          |
-| ----------------- | -------------------- |
-| PORT              | Backend server port  |
-| DATABASE_HOST     | PostgreSQL host      |
-| DATABASE_PORT     | PostgreSQL port      |
-| DATABASE_NAME     | Development database |
-| DATABASE_USER     | PostgreSQL user      |
-| DATABASE_PASSWORD | PostgreSQL password  |
-| JWT_SECRET        | JWT signing secret   |
-| CLIENT_URL        | Frontend URL         |
-
----
-
-## Test Database Setup
-
-Create a dedicated PostgreSQL database for tests.
-
-Example:
-
-```sql
-CREATE DATABASE shai-tweet-test;
-```
-
-Create:
-
-```bash
-.env.test
-```
-
-using the same variables as `.env` but pointing to the test database.
-
-Tests automatically run against the test database.
-
----
-
-## Seed Data
-
-Populate the development database:
-
-```bash
-npm run seed
-```
-
-This creates:
-
-* 10 demo users
-* Tweets
-* Follows
-* Likes
+* User registration and authentication
+* Personalized timeline feed
+* User profiles
+* Follow / Unfollow
+* Like / Unlike
+* User search
+* Pagination
 * Reply threads
 
----
+### Bonus Features
 
-## Run Backend
+* Reply threads with thread view and parent tweet context
 
-Development mode:
+## Tech Stack
 
-```bash
-npm run dev
-```
-
-Production mode:
-
-```bash
-npm start
-```
-
----
-
-## Run Tests
-
-Run all tests:
-
-```bash
-npm test
-```
-
-Run coverage:
-
-```bash
-npm run coverage
-```
-
-Current backend coverage:
-
-* 86%+
-* 83 integration tests
-
----
-
-## Demo Credentials
-
-All seeded users use:
-
-```txt
-Password123!
-```
-
-Example accounts:
-
-| Username |
-| -------- |
-| shai     |
-| ana      |
-| leo      |
-| mica     |
-| tomi     |
-| valen    |
-| nico     |
-| juli     |
-| sofi     |
-| maxi     |
-
----
-
-# Tech Stack
-
-## Frontend
+### Frontend
 
 * React
 * Vite
@@ -185,7 +31,7 @@ Example accounts:
 * Redux Toolkit
 * RTK Query
 
-## Backend
+### Backend
 
 * Node.js
 * Express
@@ -193,82 +39,40 @@ Example accounts:
 * JWT Authentication
 * bcrypt
 
-## Testing
+### Testing
 
 * Vitest
 * Supertest
 * React Testing Library
 * Playwright
 
----
-
-# Architecture
+## Architecture
 
 The backend follows a layered architecture:
 
-### Controllers
+* Controllers
+* Services
+* Repositories
+* PostgreSQL
 
-Handle HTTP requests and responses.
+This separation keeps HTTP concerns, business logic, and database access isolated and easier to test.
 
-### Services
+## Technical Decisions
 
-Contain business rules, validation, and application logic.
+### Why React + Express?
 
-### Repositories
+React and Express allow rapid iteration while maintaining a clear separation between frontend and backend concerns.
 
-Encapsulate database access and SQL queries.
+### Timeline Modeling
 
-### Database
-
-PostgreSQL stores users, tweets, follows, likes, and replies.
-
----
-
-# Core Features
-
-* User Registration
-* Login / Logout
-* JWT Authentication
-* User Profiles
-* Create Tweets
-* Delete Tweets
-* Personalized Timeline Feed
-* Pagination
-* Follow / Unfollow
-* Like / Unlike
-* Followers & Following Lists
-* User Search
-
----
-
-# Bonus Feature
-
-✅ Reply Threads
-
-The application supports tweet replies and thread retrieval.
-
-The data model also includes an `image_url` field for future image upload support, although image uploads are intentionally outside the current MVP scope.
-
----
-
-# Technical Decisions
-
-## Why React + Express?
-
-The goal was to use a stack that allows rapid iteration while maintaining clear separation between frontend and backend concerns.
-
-React provides a flexible UI architecture, while Express offers a lightweight and explicit backend layer.
-
-## Timeline Modeling
-
-The timeline is generated dynamically from:
+The feed is generated dynamically from:
 
 * The authenticated user's tweets
 * Tweets from followed users
 
-Results are returned in reverse chronological order with pagination support.
+Results are returned in reverse chronological order and support pagination.
 
-## Authentication
+### Authentication
 
 Authentication is implemented using:
 
@@ -280,22 +84,21 @@ Protected endpoints require a valid JWT.
 
 ## Testing Strategy
 
-The project uses:
+The project includes:
 
-* Integration tests for API endpoints
-* Validation testing
-* Authentication testing
-* Separate development and testing databases
+* Backend integration tests
+* Validation tests
+* Frontend integration tests
+* End-to-end authentication tests
+* Dedicated test database
 
-The test suite clears only the dedicated test database.
+Current backend coverage exceeds 80%.
 
----
-
-# AI-Assisted Development
+## AI-Assisted Development
 
 The project was developed using AI-assisted development tools.
 
-AI was primarily used for:
+AI was used for:
 
 * Boilerplate generation
 * Test generation
@@ -303,23 +106,25 @@ AI was primarily used for:
 * Architectural discussions
 * Code review assistance
 
-All generated code was manually reviewed, adapted, and validated through testing.
+All generated code was manually reviewed and validated through testing.
 
----
-
-# Known Limitations
+## Known Limitations
 
 * Image uploads are not implemented.
 * Real-time updates are not implemented.
 * Notifications are not implemented.
-* Frontend integration and responsive design are still in progress.
 
----
+## Runbook
 
-# Author
+See:
 
-**Shai Kohn**
+RUNBOOK.md
+
+## Author
+
+Shai Kohn
 
 React Native & Full-Stack Developer
 
-Portfolio: https://shaidev.vercel.app
+Portfolio:
+https://shaidev.vercel.app
